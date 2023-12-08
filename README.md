@@ -1,8 +1,6 @@
 # Webserver in C
 
-## Work in progress 🛠️🚧
-
-Simple webserver written in C programming.
+Basic webserver written in C programming Language. This is only for learning purposes.
 
 ## To Run
 

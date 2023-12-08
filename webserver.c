@@ -1,3 +1,7 @@
+// Author: Md Sadikul Amin Sadman
+// Github: SdAm1n
+// Basic Webserver in C programming language
+
 #include <stdio.h>
 #include <errno.h>
 #include <sys/socket.h>
@@ -22,16 +26,17 @@ int main()
     int sockfd = socket(AF_INET, SOCK_STREAM, 0);
     if (sockfd == -1)
     {
-        perror("webserver (socket)");
+        perror("Socket Creation Failed");
         return 1;
     }
 
-    printf("Socket Created\n");
+    printf("Socket Created...\n");
 
     // Create an address to bind the socket to that address
     struct sockaddr_in host_addr;
     int host_addrlen = sizeof(host_addr);
 
+    // set the address
     host_addr.sin_family = AF_INET;
     host_addr.sin_port = htons(PORT);
     host_addr.sin_addr.s_addr = htonl(INADDR_ANY);
@@ -43,40 +48,40 @@ int main()
     // Bind Socket to the address
     if (bind(sockfd, (struct sockaddr *)&host_addr, host_addrlen) != 0)
     {
-        perror("webserver (bind)");
+        perror("Socket Binding Failed");
         return 1;
     }
 
-    printf("Socket successfully binded\n");
+    printf("Socket binded...\n");
 
     // Listen for incoming connections
     if (listen(sockfd, SOMAXCONN) != 0)
     {
-        perror("webserver (listen)");
+        perror("Listen Failed");
         return 1;
     }
 
-    printf("Server listening for connections\n");
+    printf("Server listening...\n");
 
     // For Accepting incoming connections
     // loop to continue accepting connections
 
-    for (;;)
+    while (1)
     {
         // accept incoming connection
         int newsockfd = accept(sockfd, (struct sockaddr *)&host_addr, (socklen_t *)&host_addrlen);
         if (newsockfd < 0)
         {
-            perror("webserver (accept)");
+            perror("Server Accept Failed");
             continue;
         }
-        printf("Connection accepted\n");
+        printf("Server accepted the client...\n");
 
-        // Get cliend address
+        // Get client address
         int sockn = getsockname(newsockfd, (struct sockaddr *)&client_addr, (socklen_t *)&client_addrlen);
         if (sockn < 0)
         {
-            perror("webserver (getsockname)");
+            perror("Server getsockname Failed");
             continue;
         }
 
@@ -84,11 +89,17 @@ int main()
         int valread = read(newsockfd, buffer, BUFFER_SIZE);
         if (valread < 0)
         {
-            perror("webserver (read)");
+            perror("Server read Failed");
             continue;
         }
 
         char method[BUFFER_SIZE], uri[BUFFER_SIZE], version[BUFFER_SIZE];
+
+        // print the client request
+        printf("Printing Client Request...\n");
+        printf("%s\n", buffer);
+
+        // parse the request
         sscanf(buffer, "%s %s %s", method, uri, version);
 
         printf("[%s:%u] %s %s %s\n", inet_ntoa(client_addr.sin_addr), ntohs(client_addr.sin_port), method, version, uri);
