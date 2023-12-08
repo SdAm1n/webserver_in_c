@@ -1,6 +1,6 @@
 # Webserver in C
 
-## Work in progress
+## Work in progress 🛠️🚧
 
 Simple webserver written in C programming.
 
