@@ -8,9 +8,18 @@
 #include <arpa/inet.h>
 #include <unistd.h>
 #include <string.h>
+#include <signal.h>
+#include <stdlib.h>
 
 #define PORT 8080
 #define BUFFER_SIZE 1024
+
+// signal handler for CTRL-C
+void signal_handler(int sig)
+{
+    printf("\nCTRL-C pressed, Exiting Server...\n");
+    exit(sig);
+}
 
 int main()
 {
@@ -63,9 +72,11 @@ int main()
 
     printf("Server listening...\n");
 
+    // register signal handler for CTRL-C
+    signal(SIGINT, signal_handler);
+
     // For Accepting incoming connections
     // loop to continue accepting connections
-
     while (1)
     {
         // accept incoming connection
@@ -95,7 +106,7 @@ int main()
 
         char method[BUFFER_SIZE], uri[BUFFER_SIZE], version[BUFFER_SIZE];
 
-        // print the client request
+        // print the full request
         printf("Printing Client Request...\n");
         printf("%s\n", buffer);
 
@@ -108,7 +119,7 @@ int main()
         int valwrite = write(newsockfd, resp, strlen(resp));
         if (valwrite < 0)
         {
-            perror("webserver (write)");
+            perror("Server write Failed");
             continue;
         }
 
